@@ -13,7 +13,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include "masterlib.h"
-#define IP "192.168.1.10"
+#define IP "192.168.1.100"
 #define SEMAPH 0
 
 
