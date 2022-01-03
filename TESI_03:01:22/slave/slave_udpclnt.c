@@ -11,7 +11,7 @@
 #include <errno.h>
 #define SIZE 50
 #define IP_SIZE 20
-#define IP "192.168.1.10"
+#define IP "192.168.1.100"
 #define UDP_PORT 8000
 
 
