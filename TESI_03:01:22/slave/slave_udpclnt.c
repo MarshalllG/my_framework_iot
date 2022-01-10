@@ -21,8 +21,6 @@ void init_rand();
 int rand_gen (int min, int max);
 
 
-
-// riceve le struct e il socket, restituisce 1 se il dispositivo è attivo, 0 altrimenti
 int main ()
 {
    struct sockaddr_in Srv, fromAddr;
