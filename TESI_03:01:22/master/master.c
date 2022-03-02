@@ -9,8 +9,10 @@
 
 int main()
 {
+    // apre il thread che supporta la comunicazione UDP
     thread_UDPserver();
 
+    // crea un server TCP ricorsivo (gestisce molteplici e simultanei client)
     TCPserver();
 
     return EXIT_SUCCESS;
