@@ -14,10 +14,8 @@
 #include <pthread.h>
 #include "masterlib.h"
 #define IP "192.168.1.100"
-#define SEMAPH 0
 
-
-/* struct che raccoglie i vari dispositivi nella rete, i campi sono l'ip e lo stato */
+/* struct che rappresenta un dispositivo, i campi sono l'ip e lo stato */
 struct device
 {
     char ipaddr[IP_SIZE];
@@ -87,10 +85,7 @@ void TCPserver (void)
  
         // FORK
         if ((pid = fork()) == -1)
-        {
-            printf ("\nThis is parent: error creating subprocess\n");
-            exit (EXIT_FAILURE);
-        }
+            handle_error("\nThis is parent: error creating subprocess\n");
 
         // CHILD WILL SERVE THE CLIENT (and then, it will terminate)
         if (pid == 0)
@@ -103,8 +98,7 @@ void TCPserver (void)
            printf ("-----------------------------\n");    
            exit(0); // se non chiudo il processo mi da' errore sull'accept
         }
-        
-
+ 
         close (sk);
     
     }while (1);
