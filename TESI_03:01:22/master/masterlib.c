@@ -115,8 +115,9 @@ void serve_client (int csk, char clnt_ip[])
    int n_ip;
    int i = 0;
 
+   /* search_static_ip restituisce -1 se non trova l'ip, un indice di posizione nel file se lo trova */
    /* se non presente nel file, aggiunge il client attualmente connesso alla lista */
-   if (search_static_ip (fp, FILENAME, clnt_ip) == 0)
+   if (search_static_ip (fp, FILENAME, clnt_ip) < 0)
       add_device (fp, FILENAME, clnt_ip);
  
    //restituisce il numero degli ip registrati
@@ -364,7 +365,7 @@ void print_devices (int n_devices)
 
 
 
-// cerca un ip nel file: se lo trova restituisce l'indice per la struct device, altrimenti 0
+// cerca un ip nel file: se lo trova restituisce l'indice per la struct device, altrimenti -1
 int search_static_ip (FILE *fp, char file_name[], char clnt_ip[])
 {
    int i;
@@ -389,7 +390,7 @@ int search_static_ip (FILE *fp, char file_name[], char clnt_ip[])
    // chiude il file
    fclose(fp);
 
-   return 0;
+   return -1;
 }
 
 
