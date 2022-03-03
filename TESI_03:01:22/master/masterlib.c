@@ -120,7 +120,7 @@ void serve_client (int csk, char clnt_ip[])
    if (search_static_ip (fp, FILENAME, clnt_ip) < 0)
       add_device (fp, FILENAME, clnt_ip);
  
-   //restituisce il numero degli ip registrati
+   //restituisce il numero degli ip registrati e li carica nel vettore di struct
    n_ip = load_devices (fp, FILENAME, MAX_CLIENTS); 
 
    // dialoga in TCP con il client
@@ -128,6 +128,7 @@ void serve_client (int csk, char clnt_ip[])
    strcpy(buffer, "client connesso: di quale dispositivo devo verificare la temperatura?\nInserire numero dello slave\n");
    send(csk, buffer, strlen(buffer), 0);
 
+   // riceve una richiesta da parte del client
    bzero(buffer, SIZE);
    recv(csk, buffer, sizeof(buffer), 0);
    if (atoi(buffer) >= 0)
@@ -147,12 +148,14 @@ void serve_client (int csk, char clnt_ip[])
    if (atoi(buffer) >= 0)
    {
       bzero(buffer, SIZE);
+      // ricopia lo stato dalla struct device all'indice corretto, poi lo spedisce al client
       strcpy(buffer, d[i].dev_state);
       send(csk, buffer, strlen(buffer), 0);
       printf ("messaggio spedito al client TCP: %s\n", buffer);
    }
    else
    {
+      // altrimenti, segnala errore
       bzero (buffer, SIZE);
       printf ("Option not avaiable, closing connection...\n");
       strcpy (buffer, "Option not avaiable, closing connection...\n");
@@ -170,13 +173,11 @@ void serve_client (int csk, char clnt_ip[])
  *********************************************************************************
  ********************************************************************************/
 
-
 /* crea un thread per la comunicazione UDP */
 void thread_UDPserver (void)
 {
    pthread_t thread;
    int i, rc, res;
-
 
    // allocazione di memoria per gli argomenti della pthread_create
    struct thread_info *tinfo = calloc(MAX_CLIENTS, sizeof(*tinfo));
@@ -199,9 +200,7 @@ void thread_UDPserver (void)
    return;
 }
 
-
-
-// esegue una scansione periodica degli stati dei dispositivi registrati
+// esegue una scansione periodica dello stato dei dispositivi registrati
 void *udp_polling (void *arg)
 {
    struct thread_info *tinfo = arg;
@@ -212,10 +211,7 @@ void *udp_polling (void *arg)
 
    // SOCKET
    if((sk = socket (PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-   {
       handle_error ("error in socket\n");
-      exit (EXIT_FAILURE);
-   }
 
    // INFO SERVER UDP
    memset (&Srv, 0, sizeof (Srv));
@@ -225,11 +221,9 @@ void *udp_polling (void *arg)
 
    // BIND
    if (bind (sk, (struct sockaddr *) &Srv, sizeof (Srv)) < 0)
-   {
       handle_error ("error in bind\n");
-      exit (EXIT_FAILURE);
-   }
-   printf ("UDP SERVER: bind successfull to IP: %s, port: %d\n", IP, UDP_PORT);    
+   
+   printf ("UDP SERVER: bind successful to IP: %s, port: %d\n", IP, UDP_PORT);    
 
    // NON-BLOCKING MODE
    udp_set_non_blocking_mode(sk);
